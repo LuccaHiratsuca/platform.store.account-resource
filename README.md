@@ -1,1 +1,1 @@
-# platform.store.account-resource
+# platform.tech-emporium.account-resource
