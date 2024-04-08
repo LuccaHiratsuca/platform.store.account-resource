@@ -1,1 +1,1 @@
-# platform.241.store.account-resource
+# platform.store.account-resource
