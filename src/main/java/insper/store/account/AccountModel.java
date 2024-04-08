@@ -6,13 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
-import lombok.AllArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "account")
@@ -26,29 +26,29 @@ public class AccountModel {
     @Column(name = "id_account")
     private String id;
 
-    @Column(name = "name")
+    @Column(name = "tx_name")
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "tx_email")
     private String email;
 
-    @Column(name = "hash")
+    @Column(name = "tx_hash")
     private String hash;
 
-    public AccountModel(Account o){
+    public AccountModel(Account o) {
         this.id = o.id();
         this.name = o.name();
         this.email = o.email();
         this.hash = o.hash();
     }
-
-    public Account to(){
-        return new Account()
+    
+    public Account to() {
+        return Account.builder()
             .id(id)
             .name(name)
             .email(email)
-            .hash(hash);
+            .hash(hash)
+            .build();
     }
-
     
 }

@@ -8,14 +8,14 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Builder
-@Accessors(fluent = true, chain = true)
-@Getter @Setter
+@Getter @Setter @Accessors(fluent = true, chain = true)
 @AllArgsConstructor @NoArgsConstructor
 public class Account {
+
     private String id;
     private String name;
     private String email;
-    private String hash;
     private String password;
+    private String hash;
     
 }
