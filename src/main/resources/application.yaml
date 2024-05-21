@@ -17,19 +17,23 @@ spring:
       hibernate:
         default_schema: account
 
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+
 management:
   endpoints:
     web:
       base-path: /account/actuator
-        exposure:
-          include: [ 'prometheus' ]
+      exposure:
+        include: [ 'prometheus' ]
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-    defaultZone: http://${DISCOVERY_HOST}:8761/eureka/
+      defaultZone: http://${DISCOVERY_HOST}:8761/eureka/
 springdoc:
   api-docs:
     path: /accounts/v3/api-docs
