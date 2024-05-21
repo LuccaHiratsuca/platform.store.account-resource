@@ -6,7 +6,7 @@ pipeline {
                 build job: 'store.account', wait: true
             }
         }
-        stage('Redis') {
+        stage('Build Redis') {
             steps {
                 build job: 'tech-emporium.redis', wait: true
             }
