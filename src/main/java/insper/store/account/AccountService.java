@@ -21,7 +21,7 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    @CircuitBreaker(name = "productService", fallbackMethod = "fallbackCreate")
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackCreate")
     @CachePut(value = "accountCache", key = "#result.id")
     public Account create(Account in) {
         in.hash(calculateHash(in.password()));
@@ -33,7 +33,7 @@ public class AccountService {
         return new Account();
     }
 
-    @CircuitBreaker(name = "productService", fallbackMethod = "fallbackUpdate")
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackUpdate")
     @Cacheable(value = "accountCache", key = "#id")
     public Account read(@NonNull String id) {
         return accountRepository.findById(id).map(AccountModel::to).orElse(null);
@@ -43,7 +43,7 @@ public class AccountService {
         return new Account();
     }
 
-    @CircuitBreaker(name = "productService", fallbackMethod = "fallbackUpdate")
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackUpdate")
     @Cacheable(value = "accountLoginCache", key = "#email")
     public Account login(String email, String password) {
         String hash = calculateHash(password);
