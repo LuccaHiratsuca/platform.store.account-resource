@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,7 +26,7 @@ public class AccountService {
     @CachePut(value = "accountCache", key = "#result.id")
     public Account create(Account in) {
         in.hash(calculateHash(in.password()));
-        in.password(null);
+        in.password(null);  
         return accountRepository.save(new AccountModel(in)).to();
     }
 
@@ -35,7 +36,7 @@ public class AccountService {
 
     @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackUpdate")
     @Cacheable(value = "accountCache", key = "#id")
-    public Account read(@NonNull String id) {
+    public Account list(@NonNull String id) {
         return accountRepository.findById(id).map(AccountModel::to).orElse(null);
     }
 
@@ -64,5 +65,47 @@ public class AccountService {
             throw new RuntimeException(e);
         }
     }
-    
+
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackDelete")
+    @CacheEvict(value = "accountCache", key = "#id")
+    public Account delete(@NonNull String id) {
+        return accountRepository.findById(id).map(account -> {
+            accountRepository.deleteById(id);
+            return account.to();
+        }).orElse(null);
+    }
+
+    public Account fallbackDelete(String id, Throwable t) {
+        return new Account();
+    }
+
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackUpdate")
+    @CachePut(value = "accountCache", key = "#id")
+    public Account update(@NonNull String id, Account in) {
+        Optional<AccountModel> existingAccountOptional = accountRepository.findById(id);
+        if (!existingAccountOptional.isPresent()) {
+            return null;
+        }
+
+        AccountModel existingAccount = existingAccountOptional.get();
+        if (in.name() != null) existingAccount.name(in.name());
+        if (in.email() != null) existingAccount.email(in.email());
+        if (in.hash() != null) existingAccount.hash(in.hash());
+
+        AccountModel savedAccount = accountRepository.save(existingAccount);
+        return savedAccount.to();
+    }
+
+    public Account fallbackUpdate(String id, Account in, Throwable t) {
+        return new Account();
+    }
+
+    // read
+    @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackRead")
+    @Cacheable(value = "accountCache", key = "#id")
+    public Account read(@NonNull String id) {
+        return accountRepository.findById(id).map(AccountModel::to).orElse(null);
+    }
+
+
 }

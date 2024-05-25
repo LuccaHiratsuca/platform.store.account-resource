@@ -62,8 +62,11 @@ public class AccountResource implements AccountController {
 
     @Override
     public ResponseEntity<AccountOut> update(String id, AccountIn in) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        Account account = accountService.update(id, AccountParser.to(in));
+        if (account == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(AccountParser.to(account));
     }
 
     @Override
@@ -76,12 +79,29 @@ public class AccountResource implements AccountController {
     }
 
     @Override
-    public ResponseEntity<AccountOut> read(String idUser, String roleUser) {
+    public ResponseEntity<AccountOut> list(String idUser, String roleUser) {
         final AccountOut account = AccountOut.builder()
             .id(idUser)
             .name(roleUser)
             .build();
         return ResponseEntity.ok(account);
     }
-    
+
+    @Override
+    public ResponseEntity<AccountOut> delete(String id){
+        Account account = accountService.delete(id);
+        if (account == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(AccountParser.to(account));
+    }  
+
+    @Override
+    public ResponseEntity<AccountOut> read(String id) {
+        Account account = accountService.read(id);
+        if (account == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(AccountParser.to(account));
+    }
 }
